@@ -5,18 +5,17 @@ const apikey='1';
 
 function makesameformat(drinkName) {
   console.log('in makesameformat');
-  console.log(drinkName);
-    fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${drinkName}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(responseJson => {
-        console.log(responseJson);
-        return responseJson
-      })
+  fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${drinkName.strDrink}`)
+	  .then(response => {
+	    if (response.ok) {
+	      return response.json();
+	    }
+	    throw new Error(response.statusText);
+	  })
+	  .then(responseJson => {
+	    console.log(responseJson);
+	    displayRecipe(responseJson);
+	  })
       .catch(error => alert('Sorry, this cocktail is not in our database. Please try again.'))
 }
 
@@ -26,14 +25,8 @@ function displayRecipe(recipe) {
   $('#options').addClass("hidden");
   $('#finalize').addClass("hidden");
   $('#cocktailrecipe').removeClass("hidden");
+  recipe = recipe.drinks[0];
   console.log(recipe.strIngredient1);
-  if (recipe.strIngredient1===undefined) {
-    console.log('inside the if statement');
-    console.log(recipe.strDrink);
-    recipe = makesameformat(recipe.strDrink);
-    recipe = recipe.drinks[0];
-    console.log(recipe);
-  }
   $('#cocktailrecipe').append(
     `<h3>${recipe.strDrink}</h3>
     <br>
@@ -81,7 +74,7 @@ function showOptions(options) {
     event.preventDefault();
     let selection = $('input[name="whichcocktail"]:checked').val();
     console.log(selection);
-    displayRecipe(options.drinks[selection]);
+    makesameformat(options.drinks[selection]);
   })
 }
 
