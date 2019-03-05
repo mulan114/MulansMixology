@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Thinkful Capstone 1</title>
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <!-- fonts  -->
+  	<link href="https://fonts.googleapis.com/css?family=Roboto+Slab" rel="stylesheet">
+
+  <!-- reset -->
+  	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css">
+	
+	<link rel="stylesheet" type="text/css" href="./index.css">
+</head>
+<body>
+	<h1>Mulan's Mixology!</h1>
+	<br><br>
+	<form id="introduction">
+		<label>Do you want to search by cocktail name or by ingredient?</label>
+		<br><br>
+		<input type="radio" name="whichoption" value="0"> Cocktail Name<br>
+		<input type="radio" name="whichoption" value="1"> Ingredient Name<br>
+		<br>
+		<button id="initialselect"> Select </button>
+	</form>
+
+	<form  id="cocktailoptions" class="hidden">
+		<label>What cocktail would you like to make?</label>
+		<br><br>
+		<input type="text" name="cocktailname">
+		<br><br>
+		<button id="cocktailsearch"> Search </button>
+	</form>
+
+	<form id="ingredientoptions" class="hidden">
+		<label>What ingredient would you like to use?</label>
+		<br><br>
+		<input type="text" name="ingredientname">
+		<br><br>
+		<button id="ingredientsearch"> Search </button>
+	</form>
+
+	<div id="options" class="hidden">
+		<h2>Cocktails that fit your search:</h2>
+		<ul id="options-list"></ul> 
+	</div>
+
+	<form id="finalize" class="hidden">
+    	<br>
+    	<button id="finalselect">Select</button>
+    </form>
+
+	<div id="cocktailrecipe" class="hidden">
+		<h2>Here are the ingredients and instructions for making your drink!</h2> 
+	</div>
+
+	<script
+  	src="https://code.jquery.com/jquery-3.3.1.min.js"
+  	integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  	crossorigin="anonymous"></script>
+  	<script src="./index.js"></script>
+</body>
+</html>
