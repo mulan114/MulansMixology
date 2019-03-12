@@ -44,3 +44,12 @@ img {
 	max-width: 25%;
 	padding-right: 10px;
 }
+
+@media only screen and (max-width: 600px) {
+	#cocktailrecipe {
+		width: 90%;
+	}
+	#cocktailrecipe img {
+		max-width: 100%;
+	}
+}

@@ -1,35 +1,42 @@
 'use strict';
 
-const apikey='1';
+const apikey = '1';
+
+// make back button
+// new search button
+// check resonsive css
 
 
 // since responseJson is different depending if the user has selected drink name or
 // ingredient to start, makesameformat puts the response in the same format prior
 // to being displayed
 function makesameformat(drinkName) {
-  fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${drinkName.strDrink}`)
-	  .then(response => {
-	    if (response.ok) {
-	      return response.json();
-	    }
-	    throw new Error(response.statusText);
-	  })
-	  .then(responseJson => displayRecipe(responseJson))
-      .catch(error => alert('Sorry, this cocktail is not in our database. Please try again.'))
+    fetch(`https://www.thecocktaildb.com/api/json/v1/${apikey}/search.php?s=${drinkName.strDrink}`)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error(response.statusText);
+        })
+        .then(responseJson => displayRecipe(responseJson))
+        .catch(error => alert('Sorry, this cocktail is not in our database. Please try again.'))
 }
 
 // displays ingredients and instructions in the DOM
 function displayRecipe(recipe) {
-  $('#options').addClass("hidden");
-  $('#finalize').addClass("hidden");
-  $('#cocktailrecipe').removeClass("hidden");
-  recipe = recipe.drinks[0];
-  $('#cocktailrecipe').append(
+    $('#options').addClass("hidden");
+    $('#finalize').addClass("hidden");
+    $('#cocktailrecipe').removeClass("hidden");
+    recipe = recipe.drinks[0];
+    $('#cocktailrecipe').append(
     `<h3>${recipe.strDrink}</h3>
     <br>
     <h4>Ingredients</h4>`
     );
-  $('#cocktailrecipe').append(
+    
+    // structure of jsonResponse makes looping difficult in this instance,
+    // thus hardcoding the ingredients (since there are less than 10)
+    $('#cocktailrecipe').append(
     `<ul>${recipe.strMeasure1} ${recipe.strIngredient1}</ul>
     <ul>${recipe.strMeasure2} ${recipe.strIngredient2}</ul>
     <ul>${recipe.strMeasure3} ${recipe.strIngredient3}</ul>
@@ -41,95 +48,117 @@ function displayRecipe(recipe) {
     <ul>${recipe.strMeasure9} ${recipe.strIngredient9}</ul>
     <ul>${recipe.strMeasure10} ${recipe.strIngredient10}</ul>`
     );
-  $('#cocktailrecipe').append(
+    $('#cocktailrecipe').append(
     `<br>
     <h4>Instructions</h4>`
     );
-  $('#cocktailrecipe').append(
+    $('#cocktailrecipe').append(
     `<img src="${recipe.strDrinkThumb}">
     <p>${recipe.strInstructions}</p>`
     );
+    $('#cocktailrecipe').append(
+    `<button id="backtointro"> New Search </button>`)
+    $('#backtointro').click(event => {
+    	event.preventDefault();
+    	startOver();
+    });
 }
 
 // displays list of possible drinks that meet the name or ingredient criteria
 // selected by the user in the DOM
 function showOptions(options) {
-  $('#options').removeClass("hidden");
-  $('#cocktailoptions').addClass("hidden");
-  $('#ingredientoptions').addClass("hidden");
-  $('#options-list').empty(); //empty the screen of old results
-  for (let i=0; i<(options.drinks.length); i++) {
-    $('#options-list').append(
-      `<input type="radio" name="whichcocktail" value=${i}> ${options.drinks[i].strDrink}<br>`)
-  }
-  $('#finalize').removeClass("hidden");
-  $('#finalselect').click(event => {
-    event.preventDefault();
-    let selection = $('input[name="whichcocktail"]:checked').val();
-    makesameformat(options.drinks[selection]);
-  })
+    $('#options').removeClass("hidden");
+    $('#cocktailoptions').addClass("hidden");
+    $('#ingredientoptions').addClass("hidden");
+    $('#options-list').empty(); //empty the screen of old results
+    for (let i = 0; i < (options.drinks.length); i++) {
+        $('#options-list').append(
+        `<input type="radio" name="whichcocktail" value=${i}> ${options.drinks[i].strDrink}<br>`)
+    }
+    $('#finalize').removeClass("hidden");
+    $('#finalselect').click(event => {
+        event.preventDefault();
+        let selection = $('input[name="whichcocktail"]:checked').val();
+        makesameformat(options.drinks[selection]);
+    })
 }
 
 // retrieves the list of drinks that meet the drink name criteria selected
 // by the user via thecocktaildb.com api
 function getRecipes() {
-  console.log('getting Recipe');
-  $('#cocktailoptions').removeClass("hidden");
-  $('#introduction').addClass("hidden");
-  $('#cocktailsearch').click(event => {
-    event.preventDefault();
-    let cocktail= $('input[name="cocktailname"]').val();
-    fetch(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${cocktail}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(responseJson => showOptions(responseJson))
-      .catch(error => alert('Sorry, this cocktail is not in our database. Please try again.'))
-  })
+    console.log('getting Recipe');
+    $('#cocktailoptions').removeClass("hidden");
+    $('#introduction').addClass("hidden");
+    $('#backtointro').click(event => {
+    	event.preventDefault();
+    	startOver();
+    });
+    $('#cocktailsearch').click(event => {
+        event.preventDefault();
+        let cocktail = $('input[name="cocktailname"]').val();
+        fetch(`https://www.thecocktaildb.com/api/json/v1/${apikey}/search.php?s=${cocktail}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJson => showOptions(responseJson))
+            .catch(error => alert('Sorry, this cocktail is not in our database. Please try again.'))
+    })
 }
 
 // retrieves the list of drinks that meet the ingredient criteria selected
 // by the user via thecocktaildb.com api
 function getList() {
-  console.log('getting List');
-  $('#ingredientoptions').removeClass("hidden");
-  $('#introduction').addClass("hidden");
-  $('#ingredientsearch').click(event => {
-    event.preventDefault();
-    let ingredient= $('input[name="ingredientname"]').val();
-    console.log(ingredient);
-    fetch(`https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${ingredient}`)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error(response.statusText);
-      })
-      .then(responseJson => showOptions(responseJson))
-      .catch(error => alert('Sorry, this ingredient is not in our database. Please try again.'))
-  })
+    console.log('getting List');
+    $('#ingredientoptions').removeClass("hidden");
+    $('#introduction').addClass("hidden");
+    $('#backtointro').click(event => {
+    	event.preventDefault();
+    	startOver();
+    });
+    $('#ingredientsearch').click(event => {
+        event.preventDefault();
+        let ingredient = $('input[name="ingredientname"]').val();
+        console.log(ingredient);
+        fetch(`https://www.thecocktaildb.com/api/json/v1/${apikey}/filter.php?i=${ingredient}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error(response.statusText);
+            })
+            .then(responseJson => showOptions(responseJson))
+            .catch(error => alert('Sorry, this ingredient is not in our database. Please try again.'))
+    })
+}
+
+function startOver() {
+	console.log('starting Over');
+	$('#introduction').removeClass("hidden");
+	$('#ingredientoptions').addClass("hidden");
+	$('#cocktailoptions').addClass("hidden");
+	$('#cocktailrecipe').addClass("hidden");
 }
 
 // landing page for Mulan's Mixology, offering options to search the database 
 // using a cocktail name/keyword or by ingredient
 function watchForm() {
-  $('#initialselect').click(event => {
-    event.preventDefault();
-    let option = $('input[name="whichoption"]:checked').val();
-    if (option === "0") {
-      console.log("goto getRecipes");
-      getRecipes();
-    } else if (option === "1") {
-      getList();
-    }
-  })
+    $('#initialselect').click(event => {
+        event.preventDefault();
+        let option = $('input[name="whichoption"]:checked').val();
+        if (option === "0") {
+            console.log("goto getRecipes");
+            getRecipes();
+        } else if (option === "1") {
+            getList();
+        }
+    })
 }
 
 
 $(function() {
-  console.log('Cocktails App loaded. Waiting for submit!')
-  watchForm();
+    console.log('Cocktails App loaded. Waiting for submit!')
+    watchForm();
 });
