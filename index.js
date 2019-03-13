@@ -2,11 +2,6 @@
 
 const apikey = '1';
 
-// make back button
-// new search button
-// check resonsive css
-
-
 // since responseJson is different depending if the user has selected drink name or
 // ingredient to start, makesameformat puts the response in the same format prior
 // to being displayed
@@ -107,7 +102,6 @@ function getRecipes() {
             	}
             	alert('Sorry, this drink is not in our database.  Please try again.');
             })
-            // .catch(error => alert('Sorry, this drink is not in our database. Please try again.'))
     })
 }
 
