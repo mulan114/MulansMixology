@@ -28,7 +28,7 @@ function displayRecipe(recipe) {
     $('#finalize').addClass("hidden");
     $('#cocktailrecipe').removeClass("hidden");
     recipe = recipe.drinks[0];
-    $('#cocktailrecipe').append(
+    $('#cocktailrecipe').html(
     `<h3>${recipe.strDrink}</h3>
     <br>
     <h4>Ingredients</h4>`
@@ -57,39 +57,37 @@ function displayRecipe(recipe) {
     <p>${recipe.strInstructions}</p>`
     );
     $('#cocktailrecipe').append(
-    `<button id="backtointro"> New Search </button>`)
-    $('#backtointro').click(event => {
-    	event.preventDefault();
-    	startOver();
+    `<button id="backtointro3"> New Search </button>`)
+    $('#backtointro3').click(event => {
+    	location.reload();
     });
 }
 
 // displays list of possible drinks that meet the name or ingredient criteria
 // selected by the user in the DOM
 function showOptions(options) {
-    $('#options').removeClass("hidden");
-    $('#cocktailoptions').addClass("hidden");
-    $('#ingredientoptions').addClass("hidden");
-    $('#options-list').empty(); //empty the screen of old results
-    for (let i = 0; i < (options.drinks.length); i++) {
-        $('#options-list').append(
-        `<input type="radio" name="whichcocktail" value=${i}> ${options.drinks[i].strDrink}<br>`)
-    }
-    $('#finalize').removeClass("hidden");
-    $('#finalselect').click(event => {
-        event.preventDefault();
-        let selection = $('input[name="whichcocktail"]:checked').val();
-        makesameformat(options.drinks[selection]);
-    })
+	$('#options').removeClass("hidden");
+	$('#cocktailoptions').addClass("hidden");
+	$('#ingredientoptions').addClass("hidden");
+	$('#options-list').empty(); //empty the screen of old results
+	for (let i = 0; i < (options.drinks.length); i++) {
+	    $('#options-list').append(
+	    `<input type="radio" name="whichcocktail" value=${i}> ${options.drinks[i].strDrink}<br>`)
+	}
+	$('#finalize').removeClass("hidden");
+	$('#finalselect').click(event => {
+	    event.preventDefault();
+	    let selection = $('input[name="whichcocktail"]:checked').val();
+	    makesameformat(options.drinks[selection]);
+	})
 }
 
 // retrieves the list of drinks that meet the drink name criteria selected
 // by the user via thecocktaildb.com api
 function getRecipes() {
-    console.log('getting Recipe');
     $('#cocktailoptions').removeClass("hidden");
     $('#introduction').addClass("hidden");
-    $('#backtointro').click(event => {
+    $('#backtointro1').click(event => {
     	event.preventDefault();
     	startOver();
     });
@@ -103,25 +101,28 @@ function getRecipes() {
                 }
                 throw new Error(response.statusText);
             })
-            .then(responseJson => showOptions(responseJson))
-            .catch(error => alert('Sorry, this cocktail is not in our database. Please try again.'))
+            .then(responseJson => {
+            	if (responseJson.drinks != null) {
+            		return showOptions(responseJson);
+            	}
+            	alert('Sorry, this drink is not in our database.  Please try again.');
+            })
+            // .catch(error => alert('Sorry, this drink is not in our database. Please try again.'))
     })
 }
 
 // retrieves the list of drinks that meet the ingredient criteria selected
 // by the user via thecocktaildb.com api
 function getList() {
-    console.log('getting List');
     $('#ingredientoptions').removeClass("hidden");
     $('#introduction').addClass("hidden");
-    $('#backtointro').click(event => {
+    $('#backtointro2').click(event => {
     	event.preventDefault();
     	startOver();
     });
     $('#ingredientsearch').click(event => {
         event.preventDefault();
         let ingredient = $('input[name="ingredientname"]').val();
-        console.log(ingredient);
         fetch(`https://www.thecocktaildb.com/api/json/v1/${apikey}/filter.php?i=${ingredient}`)
             .then(response => {
                 if (response.ok) {
@@ -135,7 +136,6 @@ function getList() {
 }
 
 function startOver() {
-	console.log('starting Over');
 	$('#introduction').removeClass("hidden");
 	$('#ingredientoptions').addClass("hidden");
 	$('#cocktailoptions').addClass("hidden");
@@ -149,7 +149,6 @@ function watchForm() {
         event.preventDefault();
         let option = $('input[name="whichoption"]:checked').val();
         if (option === "0") {
-            console.log("goto getRecipes");
             getRecipes();
         } else if (option === "1") {
             getList();
